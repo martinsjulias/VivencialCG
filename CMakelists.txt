@@ -44,8 +44,8 @@ include_directories(${stb_image_SOURCE_DIR})
 
 # Lista de exemplos/exercícios podem ser colocados aqui também
 set(EXERCISES
-    Modulo1_Hello3D
-    Modulo2_Cubo
+    Vivencial1
+    Vivencial2
 )
 
 add_compile_options(-Wno-pragmas)
@@ -69,9 +69,27 @@ if (NOT EXISTS ${GLAD_C_FILE})
     message(FATAL_ERROR "Arquivo glad.c não encontrado! Baixe a GLAD manualmente em https://glad.dav1d.de/ e coloque glad.h em include/glad/ e glad.c em common/")
 endif()
 
+set(COMMON_PROJECT_SOURCES
+    ${CMAKE_SOURCE_DIR}/common/src/Camera.cpp
+    ${CMAKE_SOURCE_DIR}/common/src/Shader.cpp
+    ${CMAKE_SOURCE_DIR}/common/src/Mesh.cpp
+    ${CMAKE_SOURCE_DIR}/common/src/Curve.cpp
+    ${CMAKE_SOURCE_DIR}/common/src/Bezier.cpp
+)
+
+
 # Cria os executáveis
 foreach(EXERCISE ${EXERCISES})
-    add_executable(${EXERCISE} src/${EXERCISE}.cpp ${GLAD_C_FILE})
-    target_include_directories(${EXERCISE} PRIVATE ${CMAKE_SOURCE_DIR}/include/glad ${glm_SOURCE_DIR} ${stb_image_SOURCE_DIR})
+    add_executable(${EXERCISE} 
+                   src/${EXERCISE}.cpp  # O arquivo principal do executável
+                   ${GLAD_C_FILE}       # glad.c
+                   ${COMMON_PROJECT_SOURCES}
+    )
+    target_include_directories(${EXERCISE} PRIVATE 
+                               ${CMAKE_SOURCE_DIR}/include/glad 
+                               ${CMAKE_SOURCE_DIR}/common # Para encontrar os .h dos arquivos common/src
+                               ${glm_SOURCE_DIR} 
+                               ${stb_image_SOURCE_DIR}
+    )
     target_link_libraries(${EXERCISE} glfw ${OPENGL_LIBS})
 endforeach()
